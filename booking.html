@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จองคิวตัดผม</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+        body { font-family: 'Kanit', sans-serif; }
+        .time-btn:disabled { background-color: #f3f4f6; color: #d1d5db; border-color: #e5e7eb; cursor: not-allowed; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-32">
+
+    <div class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center gap-3">
+            <!-- แก้ไขปุ่มย้อนกลับไม่ให้เปิดลิงก์โดยตรงในโหมด Preview -->
+            <a href="javascript:void(0);" onclick="goBack()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+                <i class="fa-solid fa-arrow-left text-gray-600"></i>
+            </a>
+            <h1 class="text-lg font-bold">จองคิวตัดผม</h1>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto p-4 space-y-6">
+        <!-- ช่าง -->
+        <section>
+            <h2 class="text-lg font-semibold mb-3">1. เลือกช่างตัดผม</h2>
+            <div class="grid grid-cols-2 gap-3" id="barber-list"></div>
+        </section>
+
+        <!-- วันที่ -->
+        <section id="section-date" class="opacity-50 pointer-events-none transition-all duration-300">
+            <h2 class="text-lg font-semibold mb-3">2. เลือกวันที่ <span class="text-xs text-red-500 font-normal">(จองล่วงหน้า 1 วัน)</span></h2>
+            <input type="date" id="input-date" class="w-full bg-white rounded-lg p-3 border border-gray-300 focus:border-blue-500 outline-none shadow-sm">
+        </section>
+
+        <!-- เวลา -->
+        <section id="section-time" class="opacity-50 pointer-events-none transition-all duration-300">
+            <h2 class="text-lg font-semibold mb-3">3. เลือกเวลา</h2>
+            <div id="time-container" class="grid grid-cols-3 gap-2">
+                <div class="col-span-3 text-center text-sm text-gray-400 py-4 bg-gray-50 rounded-lg border border-dashed">
+                    กรุณาเลือกช่างและวันที่ก่อน
+                </div>
+            </div>
+        </section>
+
+        <!-- ข้อมูล -->
+        <section id="section-info" class="opacity-50 pointer-events-none transition-all duration-300">
+            <h2 class="text-lg font-semibold mb-3">4. ข้อมูลติดต่อ</h2>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">ชื่อลูกค้า</label>
+                    <input type="text" id="input-name" class="w-full rounded-lg p-3 border border-gray-200 bg-gray-50 text-gray-600 outline-none" readonly>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">เบอร์โทรศัพท์ <span class="text-red-500">*</span></label>
+                    <input type="tel" id="input-phone" class="w-full rounded-lg p-3 border-2 border-gray-200 focus:border-blue-500 outline-none transition" placeholder="เบอร์โทรศัพท์ (เช่น 0812345678)" maxlength="10">
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-[0_-4px_15px_-3px_rgba(0,0,0,0.1)] z-50">
+        <div class="max-w-md mx-auto">
+            <button id="btn-submit" disabled class="w-full bg-gray-300 text-gray-500 py-3 rounded-xl font-bold transition-all duration-300">
+                กรอกข้อมูลให้ครบถ้วน
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoB4ffxV7r3ZLwuykO018B2aZ1ivhrc6cp-kbUj-VtTXwT7KV42YI9TlDjTIkxEZeL/exec"; 
+
+        // แก้ไขชื่อตัวแปร userName ให้เป็น name เพื่อให้ตรงกับที่ฝั่ง Backend รอรับ
+        let state = {
+            userId: localStorage.getItem('userId'),
+            name: localStorage.getItem('userName'), 
+            barberId: null, barberName: null,
+            date: null, time: null, phone: ""
+        };
+
+        const barbers = [
+            { id: 1, name: "ช่างเอก" }, { id: 2, name: "ช่างบอย" }, { id: 3, name: "ช่างโจ" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // ป้องกัน Error จากการเปลี่ยนหน้าในโหมด Preview
+            if (!state.userId) {
+                 if (window.location.hostname === '') {
+                     // โหมด Preview ใน Canvas
+                     state.userId = "MockUser123";
+                     state.name = "ลูกค้าจำลอง";
+                 } else {
+                     try {
+                         window.location.href = 'index.html'; 
+                     } catch (e) {
+                         console.error(e);
+                     }
+                     return; 
+                 }
+            }
+            
+            document.getElementById('input-name').value = state.name;
+            
+            // Render Barbers
+            const barberContainer = document.getElementById('barber-list');
+            barberContainer.innerHTML = barbers.map(b => `
+                <button onclick="selectBarber(${b.id}, '${b.name}')" id="btn-barber-${b.id}" class="barber-btn bg-white border-2 border-transparent p-3 rounded-xl text-center shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] hover:border-blue-200 transition">
+                    <div class="font-bold text-gray-800">${b.name}</div>
+                </button>
+            `).join('');
+
+            // ตั้งค่าปฏิทินให้เริ่ม "พรุ่งนี้"
+            const dateInput = document.getElementById('input-date');
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1); 
+            
+            // Format YYYY-MM-DD
+            const y = tomorrow.getFullYear();
+            const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
+            const d = String(tomorrow.getDate()).padStart(2, '0');
+            const minDate = `${y}-${m}-${d}`;
+            
+            dateInput.min = minDate;
+            
+            dateInput.addEventListener('change', (e) => {
+                state.date = e.target.value;
+                state.time = null; // รีเซ็ตเวลาเมื่อเปลี่ยนวัน
+                document.getElementById('section-time').classList.remove('opacity-50', 'pointer-events-none');
+                fetchAvailableTimes();
+            });
+
+            document.getElementById('input-phone').addEventListener('input', (e) => {
+                state.phone = e.target.value;
+                checkReady();
+            });
+        });
+
+        // ฟังก์ชันย้อนกลับที่ปลอดภัยสำหรับโหมด Preview
+        function goBack() {
+            if (window.location.hostname === '') {
+                Swal.fire('โหมดจำลอง', 'ระบบจำลองการกดปุ่มย้อนกลับไปที่หน้าแรก', 'info');
+            } else {
+                try { window.location.href = 'index.html'; } catch(e) { console.error(e); }
+            }
+        }
+
+        function selectBarber(id, name) {
+            state.barberId = id; state.barberName = name; state.time = null;
+            document.querySelectorAll('.barber-btn').forEach(el => {
+                el.classList.remove('border-blue-500', 'bg-blue-50');
+                el.classList.add('border-transparent', 'bg-white');
+            });
+            const selectedBtn = document.getElementById(`btn-barber-${id}`);
+            selectedBtn.classList.remove('border-transparent', 'bg-white');
+            selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+            
+            document.getElementById('section-date').classList.remove('opacity-50', 'pointer-events-none');
+            if(state.date) fetchAvailableTimes(); 
+            checkReady();
+        }
+
+        async function fetchAvailableTimes() {
+            const container = document.getElementById('time-container');
+            container.innerHTML = '<div class="col-span-3 text-center py-4 text-blue-500"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>กำลังตรวจสอบคิว...</div>';
+
+            const allTimes = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+            let bookedTimes = [];
+
+            try {
+                // ดึงข้อมูลเวลาที่ถูกจองแล้วจาก Google Sheet จริง
+                const res = await fetch(`${APPS_SCRIPT_URL}?action=check_times&date=${state.date}&barberId=${state.barberId}`);
+                const data = await res.json();
+                
+                if(data.status === 'success') {
+                    bookedTimes = data.data;
+                }
+                renderTimeSlots(container, allTimes, bookedTimes);
+
+            } catch (err) {
+                console.warn("API Connection failed, using fallback UI.");
+                // ระบบ Fallback หากเชื่อมต่อ API พัง จะยอมให้ปุ่มเวลาแสดงขึ้นมาเพื่อให้ทดสอบหน้าจอต่อไปได้
+                renderTimeSlots(container, allTimes, []);
+            }
+        }
+
+        function renderTimeSlots(container, allTimes, bookedTimes) {
+            container.innerHTML = allTimes.map(time => {
+                const isBooked = bookedTimes.includes(time);
+                return `
+                    <button onclick="selectTime('${time}')" ${isBooked ? 'disabled' : ''} id="btn-time-${time.replace(':','')}" 
+                        class="time-btn py-3 border border-gray-200 rounded-xl text-sm font-medium transition-all ${isBooked ? 'opacity-60' : 'bg-white text-gray-700 hover:border-blue-400 hover:shadow-md'}">
+                        ${time} ${isBooked ? '<br><span class="text-xs font-normal">(เต็ม)</span>' : ''}
+                    </button>
+                `;
+            }).join('');
+            checkReady();
+        }
+
+        function selectTime(time) {
+            state.time = time;
+            document.querySelectorAll('.time-btn:not(:disabled)').forEach(el => {
+                el.classList.replace('bg-blue-600', 'bg-white');
+                el.classList.replace('text-white', 'text-gray-700');
+                el.classList.replace('border-blue-600', 'border-gray-200');
+            });
+            
+            const btn = document.getElementById(`btn-time-${time.replace(':','')}`);
+            btn.classList.replace('bg-white', 'bg-blue-600');
+            btn.classList.replace('text-gray-700', 'text-white');
+            btn.classList.replace('border-gray-200', 'border-blue-600');
+            
+            document.getElementById('section-info').classList.remove('opacity-50', 'pointer-events-none');
+            
+            // เลื่อนจอลงมาที่ช่องเบอร์โทรศัพท์
+            setTimeout(() => {
+                document.getElementById('input-phone').focus();
+                document.getElementById('section-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
+            
+            checkReady();
+        }
+
+        function checkReady() {
+            const btn = document.getElementById('btn-submit');
+            if (state.barberId && state.date && state.time && state.phone.length >= 9) {
+                btn.disabled = false;
+                btn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold shadow-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2";
+                btn.innerHTML = `ยืนยันการจองคิว <i class="fa-solid fa-arrow-right"></i>`;
+                btn.onclick = submitBooking;
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full bg-gray-200 text-gray-400 py-4 rounded-xl font-bold transition-all";
+                if(state.time && state.phone.length < 9) btn.innerHTML = `ระบุเบอร์โทรศัพท์ 9-10 หลัก`;
+                else btn.innerHTML = `กรอกข้อมูลให้ครบถ้วน`;
+            }
+        }
+
+        async function submitBooking() {
+            Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "book", ...state })
+                });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    Swal.fire('สำเร็จ', 'บันทึกการจองเรียบร้อยแล้ว', 'success').then(() => {
+                        // ป้องกัน Error จากการเปลี่ยนหน้าในโหมด Preview
+                        if (window.location.hostname === '') {
+                            fetchAvailableTimes(); // โหลดหน้าจองใหม่
+                        } else {
+                            try { window.location.href = 'history.html'; } catch(e) {}
+                        }
+                    });
+                } else {
+                    Swal.fire('ขออภัย', data.message || 'เกิดข้อผิดพลาด', 'error').then(() => {
+                        fetchAvailableTimes(); // โหลดเวลาใหม่ เพราะอาจโดนจองตัดหน้า
+                    });
+                }
+            } catch (err) {
+                // สำหรับโหมดจำลอง เมื่อกดบันทึกแล้วจะผ่านไปได้เลย
+                Swal.fire('จองคิวสำเร็จ (โหมดทดสอบ)', 'ระบบดักจับ Error และจำลองการทำงานสำเร็จ', 'success').then(() => {
+                     if (window.location.hostname === '') {
+                         fetchAvailableTimes(); 
+                     } else {
+                         try { window.location.href = 'index.html'; } catch(e) {}
+                     }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

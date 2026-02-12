@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการร้าน (Admin)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+        body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
+        .hidden-section { display: none; }
+    </style>
+</head>
+<body class="text-gray-800 pb-20">
+
+    <!-- Navbar -->
+    <div class="bg-gray-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <h1 class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-scissors text-orange-500"></i> Barber Admin
+            </h1>
+            <button id="btn-logout" onclick="logoutAdmin()" class="hidden text-sm text-gray-300 hover:text-white bg-gray-800 px-3 py-1 rounded">
+                ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- 1. หน้า Login สำหรับ Admin -->
+    <div id="login-section" class="max-w-sm mx-auto mt-20 p-6 bg-white rounded-2xl shadow-lg mx-4">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-lock text-2xl text-white"></i>
+            </div>
+            <h2 class="text-2xl font-bold">เข้าสู่ระบบหลังร้าน</h2>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้ (Username)</label>
+                <input type="text" id="admin-user" class="w-full border p-3 rounded-lg outline-none focus:border-gray-900 bg-gray-50">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน (Password)</label>
+                <input type="password" id="admin-pass" class="w-full border p-3 rounded-lg outline-none focus:border-gray-900 bg-gray-50">
+            </div>
+            <button onclick="loginAdmin()" class="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-xl font-bold transition">
+                เข้าสู่ระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. หน้า Dashboard แสดงคิวทั้งหมด -->
+    <div id="dashboard-section" class="hidden-section max-w-4xl mx-auto mt-6 px-4">
+        
+        <div class="flex justify-between items-end mb-4">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">รายการคิวรอตัดผม</h2>
+                <p class="text-sm text-gray-500">คิวทั้งหมดที่ยังไม่ถูกยกเลิก</p>
+            </div>
+            <button onclick="fetchBookings()" class="bg-white border text-gray-600 px-3 py-2 rounded-lg shadow-sm hover:bg-gray-50 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> รีเฟรช
+            </button>
+        </div>
+
+        <!-- พื้นที่แสดงข้อมูลการจอง -->
+        <div id="bookings-container" class="space-y-3">
+            <!-- ข้อมูลจะถูกโหลดมาใส่ตรงนี้ด้วย JS -->
+        </div>
+
+    </div>
+
+    <script>
+        // *** นำ URL ของ Apps Script ล่าสุดมาใส่ตรงนี้ ***
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoB4ffxV7r3ZLwuykO018B2aZ1ivhrc6cp-kbUj-VtTXwT7KV42YI9TlDjTIkxEZeL/exec"; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // เช็คว่าเคย Login ไว้ไหมใน Session (ปิดเบราว์เซอร์แล้วจะหายไป)
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                showDashboard();
+            }
+        });
+
+        async function loginAdmin() {
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            if(!user || !pass) {
+                Swal.fire('แจ้งเตือน', 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน', 'warning');
+                return;
+            }
+
+            Swal.fire({ title: 'กำลังตรวจสอบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                // เรียก API เพื่อตรวจสอบ Login
+                const res = await fetch(`${APPS_SCRIPT_URL}?action=admin_login&user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    Swal.close();
+                    sessionStorage.setItem('adminLoggedIn', 'true'); // บันทึกสถานะไว้
+                    showDashboard();
+                } else {
+                    Swal.fire('เข้าสู่ระบบล้มเหลว', data.message, 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'ไม่สามารถเชื่อมต่อระบบได้', 'error');
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('adminLoggedIn');
+            document.getElementById('admin-user').value = '';
+            document.getElementById('admin-pass').value = '';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('btn-logout').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+            document.getElementById('btn-logout').classList.remove('hidden');
+            fetchBookings(); // โหลดข้อมูลทันทีที่เข้าหน้า Dashboard
+        }
+
+        async function fetchBookings() {
+            const container = document.getElementById('bookings-container');
+            container.innerHTML = `<div class="text-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-2"></i><p class="text-gray-500">กำลังโหลดรายการคิว...</p></div>`;
+
+            try {
+                const res = await fetch(`${APPS_SCRIPT_URL}?action=admin_get_bookings`);
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    renderBookings(data.data);
+                } else {
+                    container.innerHTML = `<div class="text-center text-red-500 py-10">เกิดข้อผิดพลาด: ${data.message}</div>`;
+                }
+            } catch (err) {
+                container.innerHTML = `<div class="text-center text-red-500 py-10">ไม่สามารถโหลดข้อมูลได้</div>`;
+            }
+        }
+
+        function renderBookings(bookings) {
+            const container = document.getElementById('bookings-container');
+            
+            if (!bookings || bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-10 rounded-xl text-center border shadow-sm">
+                        <i class="fa-regular fa-calendar-check text-4xl text-gray-300 mb-2"></i>
+                        <p class="text-gray-500">ยังไม่มีรายการจองคิวในขณะนี้</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = bookings.map(item => `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-md font-bold">${item.time} น.</span>
+                            <span class="font-bold text-gray-800 text-lg">${formatDateThai(item.date)}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
+                            <p><i class="fa-regular fa-user text-gray-400 w-5"></i> <span class="font-medium text-gray-800">${item.name}</span></p>
+                            <p><i class="fa-solid fa-phone text-gray-400 w-5"></i> <a href="tel:${item.phone}" class="text-blue-600 hover:underline">${item.phone}</a></p>
+                            <p class="col-span-2"><i class="fa-solid fa-scissors text-orange-400 w-5"></i> ช่าง: <span class="font-medium">${item.barber}</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t sm:border-t-0 pt-3 sm:pt-0 sm:pl-3 sm:border-l">
+                        <button onclick="cancelBooking(${item.row}, '${item.name}', '${item.time}')" 
+                            class="w-full sm:w-auto bg-red-50 hover:bg-red-500 text-red-600 hover:text-white border border-red-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-ban"></i> ยกเลิกคิวนี้
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function cancelBooking(rowId, customerName, time) {
+            const result = await Swal.fire({
+                title: 'ยืนยันการยกเลิก?',
+                text: `คุณต้องการยกเลิกคิวของ "${customerName}" เวลา ${time} น. ใช่หรือไม่? (เมื่อยกเลิกแล้ว ลูกค้าคนอื่นจะสามารถจองเวลานี้ได้ทันที)`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: 'ยืนยันยกเลิก',
+                cancelButtonText: 'ปิด'
+            });
+
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'กำลังยกเลิกคิว...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                
+                try {
+                    const res = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: "admin_cancel", row: rowId })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.status === 'success') {
+                        Swal.fire('ยกเลิกสำเร็จ', 'คิวนี้ถูกยกเลิกแล้ว', 'success');
+                        fetchBookings(); // รีเฟรชรายการใหม่ทันที
+                    } else {
+                        Swal.fire('ผิดพลาด', data.message, 'error');
+                    }
+                } catch (err) {
+                    Swal.fire('Error', 'ไม่สามารถเชื่อมต่อระบบได้', 'error');
+                }
+            }
+        }
+
+        function formatDateThai(dateStr) {
+            try {
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                return new Date(dateStr).toLocaleDateString('th-TH', options);
+            } catch(e) { return dateStr; }
+        }
+    </script>
+</body>
+</html>
