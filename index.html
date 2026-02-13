@@ -111,7 +111,7 @@
                 </div>
             </section>
 
-            <!-- Price List Section -->
+            <!-- Price List Section (ปรับปรุงใหม่ตามรายการที่ขอ) -->
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">อัตราค่าบริการ</h2>
@@ -119,6 +119,7 @@
                 </div>
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-2">
                     <ul class="divide-y divide-gray-100">
+                        <!-- ตัดผมเด็กเล็ก -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500">
@@ -131,6 +132,8 @@
                             </div>
                             <span class="font-bold text-lg text-gray-900">60฿</span>
                         </li>
+                        
+                        <!-- ตัดผมเด็กโต -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-sky-50 rounded-full flex items-center justify-center text-sky-500">
@@ -143,17 +146,75 @@
                             </div>
                             <span class="font-bold text-lg text-gray-900">100฿</span>
                         </li>
+                        
+                        <!-- ตัดผมผู้ใหญ่ -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500">
                                     <i class="fa-solid fa-user-tie"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800 text-sm">ผู้ใหญ่</p>
+                                    <p class="font-bold text-gray-800 text-sm">ตัดผมผู้ใหญ่</p>
                                     <p class="text-xs text-gray-400">ตัด ซอย เซ็ตทรง</p>
                                 </div>
                             </div>
                             <span class="font-bold text-lg text-gray-900">120-140฿</span>
+                        </li>
+
+                        <!-- แคะหู (เพิ่มใหม่) -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-yellow-50 rounded-full flex items-center justify-center text-yellow-600">
+                                    <i class="fa-solid fa-hand-sparkles"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">แคะหู</p>
+                                    <p class="text-xs text-gray-400">ทำความสะอาด</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-lg text-gray-900">50฿</span>
+                        </li>
+
+                        <!-- ล้างตา (เพิ่มใหม่) -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
+                                    <i class="fa-solid fa-eye"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">ล้างตา</p>
+                                    <p class="text-xs text-gray-400">ผ่อนคลายดวงตา</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-lg text-gray-900">50฿</span>
+                        </li>
+
+                        <!-- ทำสีผม (เพิ่มใหม่) -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-purple-600">
+                                    <i class="fa-solid fa-paintbrush"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">ทำสีผม</p>
+                                    <p class="text-xs text-gray-400">ปิดผมขาว</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-lg text-gray-900">100฿</span>
+                        </li>
+
+                        <!-- ดัดผม/ยืดผม (เพิ่มใหม่) -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-pink-50 rounded-full flex items-center justify-center text-pink-600">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">ดัดผม - ยืดผม</p>
+                                    <p class="text-xs text-gray-400">วอลลุ่ม / ตรงธรรมชาติ</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-lg text-gray-900">1,000฿</span>
                         </li>
                     </ul>
                 </div>
@@ -191,21 +252,21 @@
 
                     <!-- Item 4 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <img src="https://images.unsplash.com/photo-1512804593922-0a1518f88301?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
                         <p class="text-sm font-bold text-gray-800 text-center">Buzz Cut</p>
                         <p class="text-[10px] text-gray-400 text-center">สกินเฮด สั้นเกรียน</p>
                     </div>
 
                     <!-- Item 5 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <img src="https://images.unsplash.com/photo-1588665045610-1845bb08f6eb?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
                         <p class="text-sm font-bold text-gray-800 text-center">Mullet</p>
                         <p class="text-[10px] text-gray-400 text-center">รากไทรยอดฮิต</p>
                     </div>
 
                     <!-- Item 6 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <img src="https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
                         <p class="text-sm font-bold text-gray-800 text-center">Two Block</p>
                         <p class="text-[10px] text-gray-400 text-center">ทูบล็อคสไตล์เกาหลี</p>
                     </div>
@@ -241,12 +302,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // เรียกใช้งานฟังก์ชันตรวจสอบสถานะร้าน
             updateShopStatus();
 
             try {
                 if (LIFF_ID === "YOUR_LIFF_ID") {
-                    // สำหรับทดสอบใน Canvas (ถ้ายังไม่ได้ใส่ LIFF ID)
                     setTimeout(() => {
                         document.getElementById('display-name').textContent = "ลูกค้าจำลอง";
                         document.getElementById('loading-screen').classList.add('hidden');
