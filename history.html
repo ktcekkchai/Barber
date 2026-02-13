@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการจอง</title>
+    <title>รายการจองของฉัน</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
-        body { font-family: 'Kanit', sans-serif; }
+        body { font-family: 'Kanit', sans-serif; background-color: #f8fafc; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-10">
+<body class="text-gray-800 pb-10 min-h-screen">
 
     <!-- Header -->
     <div class="bg-white shadow-sm sticky top-0 z-50">
@@ -19,7 +19,7 @@
             <a href="index.html" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
                 <i class="fa-solid fa-arrow-left text-gray-600"></i>
             </a>
-            <h1 class="text-lg font-bold">ประวัติการจอง</h1>
+            <h1 class="text-lg font-bold">รายการจองของฉัน</h1>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
     <div class="max-w-md mx-auto p-4" id="history-container">
         <div class="text-center py-10 text-blue-500">
             <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-            <p>กำลังโหลดประวัติ...</p>
+            <p>กำลังโหลดข้อมูล...</p>
         </div>
     </div>
 
@@ -38,6 +38,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const userId = localStorage.getItem('userId');
             
+            // ตรวจสอบการ Login
             if(!userId) { 
                 if (window.location.hostname === '') {
                     renderMockHistory(); 
@@ -51,70 +52,111 @@
             const container = document.getElementById('history-container');
             
             try {
+                // ดึงข้อมูลจาก Google Script
                 const res = await fetch(`${APPS_SCRIPT_URL}?action=history&userId=${userId}`);
                 const data = await res.json();
                 
-                if(data.status === 'success' && data.data.length > 0) {
+                if(data.status === 'success') {
                     
-                    container.innerHTML = data.data.map(item => {
-                        const isCancelled = (item.status === 'Cancelled');
-                        
-                        const statusBadge = isCancelled 
-                            ? `<span class="text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-100"><i class="fa-solid fa-xmark"></i> ถูกยกเลิก</span>`
-                            : `<span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100"><i class="fa-solid fa-check"></i> ยืนยันแล้ว</span>`;
-                        
-                        const cardStyle = isCancelled ? 'opacity-70 bg-gray-50' : 'bg-white';
-                        const textStyle = isCancelled ? 'line-through text-gray-400' : 'text-gray-800';
+                    // 🟢 กรองข้อมูล: เอาเฉพาะสถานะ 'Confirmed' เท่านั้น
+                    // (ตัด Cancelled และ Success ออกไป)
+                    const activeBookings = data.data.filter(item => item.status === 'Confirmed');
 
-                        // แสดงรายการบริการ (ถ้าไม่มีให้ขึ้นว่า ทั่วไป)
-                        const servicesList = item.services || "บริการทั่วไป";
+                    if (activeBookings.length > 0) {
+                        container.innerHTML = activeBookings.map(item => {
+                            // แสดงรายการบริการ (ถ้าไม่มีให้ขึ้นว่า ทั่วไป)
+                            const servicesList = item.services || "บริการทั่วไป";
 
-                        return `
-                        <div class="${cardStyle} p-4 rounded-xl border border-gray-200 mb-3 shadow-sm hover:shadow-md transition">
-                            <div class="flex justify-between items-start mb-3 border-b border-gray-100 pb-2">
-                                <div>
-                                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">${item.time} น.</span>
-                                    <span class="font-bold ${textStyle} ml-2">${item.date}</span>
+                            return `
+                            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition mb-3 relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+                                <div class="flex justify-between items-start mb-3 border-b border-gray-100 pb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
+                                            ${item.time}
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-gray-800 leading-tight">${formatDateThai(item.date)}</p>
+                                            <p class="text-xs text-gray-400">เวลานัดหมาย</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100 font-medium">
+                                        <i class="fa-solid fa-clock"></i> รอรับบริการ
+                                    </span>
                                 </div>
-                                ${statusBadge}
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-scissors text-orange-500 w-5 text-center"></i> 
+                                        <span>ช่าง: <span class="font-bold">${item.barber}</span></span>
+                                    </p>
+                                    <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 flex items-start gap-2">
+                                        <i class="fa-solid fa-list-check text-purple-500 w-5 text-center mt-0.5"></i>
+                                        <span class="text-gray-600 text-xs leading-relaxed">${servicesList}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="space-y-2">
-                                <p class="text-sm text-gray-700 flex items-start gap-2">
-                                    <i class="fa-solid fa-scissors text-orange-500 w-5 text-center mt-0.5"></i> 
-                                    <span><span class="text-gray-500 text-xs mr-1">ช่าง:</span> ${item.barber}</span>
-                                </p>
-                                <p class="text-sm text-gray-700 flex items-start gap-2">
-                                    <i class="fa-solid fa-list-check text-purple-500 w-5 text-center mt-0.5"></i>
-                                    <span><span class="text-gray-500 text-xs mr-1">บริการ:</span> ${servicesList}</span>
-                                </p>
-                            </div>
-                        </div>
-                        `;
-                    }).join('');
+                            `;
+                        }).join('');
+                    } else {
+                        // กรณีไม่มีคิวรอ (ว่างเปล่า)
+                        container.innerHTML = `
+                            <div class="text-center py-16 opacity-60">
+                                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                                    <i class="fa-regular fa-calendar-check text-4xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-gray-600">ไม่มีคิวที่รอรับบริการ</h3>
+                                <p class="text-sm text-gray-400 mt-1">ประวัติการจองที่เสร็จสิ้นแล้วจะไม่แสดงในหน้านี้</p>
+                                <a href="booking.html" class="inline-block mt-6 px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition">
+                                    จองคิวใหม่
+                                </a>
+                            </div>`;
+                    }
 
                 } else {
-                    container.innerHTML = `<div class="text-center py-10 opacity-50"><i class="fa-regular fa-calendar-xmark text-4xl mb-2"></i><p>ยังไม่มีประวัติการจอง</p></div>`;
+                    container.innerHTML = `<div class="text-center py-10 opacity-50"><i class="fa-regular fa-calendar-xmark text-4xl mb-2"></i><p>ไม่พบข้อมูล</p></div>`;
                 }
             } catch (err) {
                 console.error("Fetch Error:", err);
-                container.innerHTML = `<div class="text-center py-10 text-red-500">โหลดประวัติไม่สำเร็จ</div>`;
+                container.innerHTML = `<div class="text-center py-10 text-red-500">โหลดข้อมูลไม่สำเร็จ</div>`;
             }
         });
 
+        function formatDateThai(dateStr) {
+            try {
+                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+                return new Date(dateStr).toLocaleDateString('th-TH', options);
+            } catch(e) { return dateStr; }
+        }
+
+        // จำลองข้อมูลสำหรับหน้า Canvas Preview
         function renderMockHistory() {
             const container = document.getElementById('history-container');
             container.innerHTML = `
-                <div class="bg-white p-4 rounded-xl border border-gray-200 mb-3 shadow-sm">
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition mb-3 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
                     <div class="flex justify-between items-start mb-3 border-b border-gray-100 pb-2">
-                        <div>
-                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">14:00 น.</span>
-                            <span class="font-bold text-gray-800 ml-2">2026-02-14</span>
+                        <div class="flex items-center gap-2">
+                            <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
+                                14:00
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 leading-tight">14 กุมภาพันธ์ 2569</p>
+                                <p class="text-xs text-gray-400">เวลานัดหมาย</p>
+                            </div>
                         </div>
-                        <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100"><i class="fa-solid fa-check"></i> ยืนยันแล้ว</span>
+                        <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100 font-medium">
+                            <i class="fa-solid fa-clock"></i> รอรับบริการ
+                        </span>
                     </div>
-                    <div class="space-y-2">
-                        <p class="text-sm text-gray-700 flex items-start gap-2"><i class="fa-solid fa-scissors text-orange-500 w-5 text-center mt-0.5"></i> <span><span class="text-gray-500 text-xs mr-1">ช่าง:</span> ช่างเอก</span></p>
-                        <p class="text-sm text-gray-700 flex items-start gap-2"><i class="fa-solid fa-list-check text-purple-500 w-5 text-center mt-0.5"></i> <span><span class="text-gray-500 text-xs mr-1">บริการ:</span> ตัดผม, ดัดผม (3 ชม.)</span></p>
+                    <div class="space-y-2 text-sm">
+                        <p class="text-gray-700 flex items-center gap-2">
+                            <i class="fa-solid fa-scissors text-orange-500 w-5 text-center"></i> 
+                            <span>ช่าง: <span class="font-bold">ช่างเอก (จำลอง)</span></span>
+                        </p>
+                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 flex items-start gap-2">
+                            <i class="fa-solid fa-list-check text-purple-500 w-5 text-center mt-0.5"></i>
+                            <span class="text-gray-600 text-xs leading-relaxed">ตัดผม, ดัดผม</span>
+                        </div>
                     </div>
                 </div>
             `;
