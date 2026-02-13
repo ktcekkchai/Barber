@@ -11,13 +11,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
         body { font-family: 'Kanit', sans-serif; }
         .time-btn:disabled { background-color: #f3f4f6; color: #d1d5db; border-color: #e5e7eb; cursor: not-allowed; }
+        .service-checkbox:checked + div { border-color: #2563eb; background-color: #eff6ff; }
+        .service-checkbox:checked + div .check-icon { display: block; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-32">
 
     <div class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-md mx-auto px-4 py-3 flex items-center gap-3">
-            <!-- แก้ไขปุ่มย้อนกลับไม่ให้เปิดลิงก์โดยตรงในโหมด Preview -->
             <a href="javascript:void(0);" onclick="goBack()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
                 <i class="fa-solid fa-arrow-left text-gray-600"></i>
             </a>
@@ -26,31 +27,82 @@
     </div>
 
     <div class="max-w-md mx-auto p-4 space-y-6">
-        <!-- ช่าง -->
+        
+        <!-- 1. เลือกช่าง -->
         <section>
             <h2 class="text-lg font-semibold mb-3">1. เลือกช่างตัดผม</h2>
             <div class="grid grid-cols-2 gap-3" id="barber-list"></div>
         </section>
 
-        <!-- วันที่ -->
+        <!-- 2. เลือกบริการ (เพิ่มใหม่) -->
+        <section id="section-services" class="opacity-50 pointer-events-none transition-all duration-300">
+            <h2 class="text-lg font-semibold mb-3">2. เลือกบริการ <span class="text-xs text-gray-500">(เลือกได้มากกว่า 1)</span></h2>
+            <div class="space-y-2">
+                <!-- Service 1 -->
+                <label class="cursor-pointer block">
+                    <input type="checkbox" class="service-checkbox hidden" value="1" data-name="ตัดผม" data-time="1" onchange="updateServiceSelection()">
+                    <div class="border rounded-xl p-3 flex justify-between items-center bg-white hover:border-blue-300 transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600"><i class="fa-solid fa-scissors"></i></div>
+                            <div>
+                                <p class="font-bold text-sm">ตัดผม</p>
+                                <p class="text-xs text-gray-400">ใช้เวลา 1 ชม.</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-blue-600 text-xl check-icon hidden"></i>
+                    </div>
+                </label>
+                <!-- Service 2 -->
+                <label class="cursor-pointer block">
+                    <input type="checkbox" class="service-checkbox hidden" value="2" data-name="แคะหู/ทำสี" data-time="1" onchange="updateServiceSelection()">
+                    <div class="border rounded-xl p-3 flex justify-between items-center bg-white hover:border-blue-300 transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <div>
+                                <p class="font-bold text-sm">แคะหู / ล้างตา / ทำสี</p>
+                                <p class="text-xs text-gray-400">ใช้เวลา 1 ชม.</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-blue-600 text-xl check-icon hidden"></i>
+                    </div>
+                </label>
+                <!-- Service 3 -->
+                <label class="cursor-pointer block">
+                    <input type="checkbox" class="service-checkbox hidden" value="3" data-name="ดัด/ยืด" data-time="3" onchange="updateServiceSelection()">
+                    <div class="border rounded-xl p-3 flex justify-between items-center bg-white hover:border-blue-300 transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600"><i class="fa-solid fa-wind"></i></div>
+                            <div>
+                                <p class="font-bold text-sm">ดัดผม / ยืดผม</p>
+                                <p class="text-xs text-gray-400">ใช้เวลา 3 ชม.</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-blue-600 text-xl check-icon hidden"></i>
+                    </div>
+                </label>
+            </div>
+            <p id="total-time-display" class="text-right text-sm font-bold text-blue-600 mt-2 hidden">รวมเวลา: 0 ชม.</p>
+        </section>
+
+        <!-- 3. วันที่ -->
         <section id="section-date" class="opacity-50 pointer-events-none transition-all duration-300">
-            <h2 class="text-lg font-semibold mb-3">2. เลือกวันที่ <span class="text-xs text-red-500 font-normal">(จองล่วงหน้า 1 วัน)</span></h2>
+            <h2 class="text-lg font-semibold mb-3">3. เลือกวันที่</h2>
             <input type="date" id="input-date" class="w-full bg-white rounded-lg p-3 border border-gray-300 focus:border-blue-500 outline-none shadow-sm">
         </section>
 
-        <!-- เวลา -->
+        <!-- 4. เวลา -->
         <section id="section-time" class="opacity-50 pointer-events-none transition-all duration-300">
-            <h2 class="text-lg font-semibold mb-3">3. เลือกเวลา</h2>
+            <h2 class="text-lg font-semibold mb-3">4. เลือกเวลาเริ่มต้น</h2>
             <div id="time-container" class="grid grid-cols-3 gap-2">
                 <div class="col-span-3 text-center text-sm text-gray-400 py-4 bg-gray-50 rounded-lg border border-dashed">
-                    กรุณาเลือกช่างและวันที่ก่อน
+                    กรุณาเลือกบริการและวันที่ก่อน
                 </div>
             </div>
         </section>
 
-        <!-- ข้อมูล -->
+        <!-- 5. ข้อมูล -->
         <section id="section-info" class="opacity-50 pointer-events-none transition-all duration-300">
-            <h2 class="text-lg font-semibold mb-3">4. ข้อมูลติดต่อ</h2>
+            <h2 class="text-lg font-semibold mb-3">5. ข้อมูลติดต่อ</h2>
             <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
                 <div>
                     <label class="block text-xs font-medium text-gray-500 mb-1">ชื่อลูกค้า</label>
@@ -58,14 +110,14 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-500 mb-1">เบอร์โทรศัพท์ <span class="text-red-500">*</span></label>
-                    <input type="tel" id="input-phone" class="w-full rounded-lg p-3 border-2 border-gray-200 focus:border-blue-500 outline-none transition" placeholder="เบอร์โทรศัพท์ (เช่น 0812345678)" maxlength="10">
+                    <input type="tel" id="input-phone" class="w-full rounded-lg p-3 border-2 border-gray-200 focus:border-blue-500 outline-none transition" placeholder="ระบุเบอร์โทรศัพท์" maxlength="10">
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- Action Bar -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-[0_-4px_15px_-3px_rgba(0,0,0,0.1)] z-50">
+    <!-- Submit Button -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg z-50">
         <div class="max-w-md mx-auto">
             <button id="btn-submit" disabled class="w-full bg-gray-300 text-gray-500 py-3 rounded-xl font-bold transition-all duration-300">
                 กรอกข้อมูลให้ครบถ้วน
@@ -74,14 +126,15 @@
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoB4ffxV7r3ZLwuykO018B2aZ1ivhrc6cp-kbUj-VtTXwT7KV42YI9TlDjTIkxEZeL/exec"; 
+        // *** นำ URL ของ Apps Script ล่าสุดมาใส่ตรงนี้ ***
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbDcOiyzvUnEsYd_tTgZ17oYTK3XBHCgA0q2kjeus676XTjTqgxmbqS-YM28TKPPGk/exec"; 
 
-        // แก้ไขชื่อตัวแปร userName ให้เป็น name เพื่อให้ตรงกับที่ฝั่ง Backend รอรับ
         let state = {
             userId: localStorage.getItem('userId'),
             name: localStorage.getItem('userName'), 
             barberId: null, barberName: null,
-            date: null, time: null, phone: ""
+            date: null, time: null, phone: "",
+            services: [], totalDuration: 0, serviceNames: ""
         };
 
         const barbers = [
@@ -89,49 +142,37 @@
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
-            // ป้องกัน Error จากการเปลี่ยนหน้าในโหมด Preview
             if (!state.userId) {
                  if (window.location.hostname === '') {
-                     // โหมด Preview ใน Canvas
                      state.userId = "MockUser123";
                      state.name = "ลูกค้าจำลอง";
                  } else {
-                     try {
-                         window.location.href = 'index.html'; 
-                     } catch (e) {
-                         console.error(e);
-                     }
+                     try { window.location.href = 'index.html'; } catch (e) { console.error(e); }
                      return; 
                  }
             }
-            
             document.getElementById('input-name').value = state.name;
             
             // Render Barbers
             const barberContainer = document.getElementById('barber-list');
             barberContainer.innerHTML = barbers.map(b => `
-                <button onclick="selectBarber(${b.id}, '${b.name}')" id="btn-barber-${b.id}" class="barber-btn bg-white border-2 border-transparent p-3 rounded-xl text-center shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] hover:border-blue-200 transition">
+                <button onclick="selectBarber(${b.id}, '${b.name}')" id="btn-barber-${b.id}" class="barber-btn bg-white border-2 border-transparent p-3 rounded-xl text-center shadow-sm hover:border-blue-200 transition">
                     <div class="font-bold text-gray-800">${b.name}</div>
                 </button>
             `).join('');
 
-            // ตั้งค่าปฏิทินให้เริ่ม "พรุ่งนี้"
+            // Init Date
             const dateInput = document.getElementById('input-date');
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1); 
-            
-            // Format YYYY-MM-DD
             const y = tomorrow.getFullYear();
             const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
             const d = String(tomorrow.getDate()).padStart(2, '0');
-            const minDate = `${y}-${m}-${d}`;
-            
-            dateInput.min = minDate;
+            dateInput.min = `${y}-${m}-${d}`;
             
             dateInput.addEventListener('change', (e) => {
                 state.date = e.target.value;
-                state.time = null; // รีเซ็ตเวลาเมื่อเปลี่ยนวัน
-                document.getElementById('section-time').classList.remove('opacity-50', 'pointer-events-none');
+                state.time = null;
                 fetchAvailableTimes();
             });
 
@@ -141,17 +182,13 @@
             });
         });
 
-        // ฟังก์ชันย้อนกลับที่ปลอดภัยสำหรับโหมด Preview
         function goBack() {
-            if (window.location.hostname === '') {
-                Swal.fire('โหมดจำลอง', 'ระบบจำลองการกดปุ่มย้อนกลับไปที่หน้าแรก', 'info');
-            } else {
-                try { window.location.href = 'index.html'; } catch(e) { console.error(e); }
-            }
+            if (window.location.hostname === '') { Swal.fire('Preview', 'Go Back', 'info'); } 
+            else { try { window.location.href = 'index.html'; } catch(e) {} }
         }
 
         function selectBarber(id, name) {
-            state.barberId = id; state.barberName = name; state.time = null;
+            state.barberId = id; state.barberName = name; 
             document.querySelectorAll('.barber-btn').forEach(el => {
                 el.classList.remove('border-blue-500', 'bg-blue-50');
                 el.classList.add('border-transparent', 'bg-white');
@@ -160,44 +197,101 @@
             selectedBtn.classList.remove('border-transparent', 'bg-white');
             selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
             
-            document.getElementById('section-date').classList.remove('opacity-50', 'pointer-events-none');
-            if(state.date) fetchAvailableTimes(); 
+            document.getElementById('section-services').classList.remove('opacity-50', 'pointer-events-none');
+            checkReady();
+        }
+
+        function updateServiceSelection() {
+            const checkboxes = document.querySelectorAll('.service-checkbox:checked');
+            let duration = 0;
+            let names = [];
+            
+            checkboxes.forEach(cb => {
+                duration += parseInt(cb.dataset.time);
+                names.push(cb.dataset.name);
+            });
+
+            state.totalDuration = duration;
+            state.serviceNames = names.join(', ');
+
+            const display = document.getElementById('total-time-display');
+            if(duration > 0) {
+                display.textContent = `รวมเวลา: ${duration} ชั่วโมง`;
+                display.classList.remove('hidden');
+                document.getElementById('section-date').classList.remove('opacity-50', 'pointer-events-none');
+                if(state.date) fetchAvailableTimes();
+            } else {
+                display.classList.add('hidden');
+                document.getElementById('section-date').classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('section-time').classList.add('opacity-50', 'pointer-events-none');
+            }
             checkReady();
         }
 
         async function fetchAvailableTimes() {
-            const container = document.getElementById('time-container');
-            container.innerHTML = '<div class="col-span-3 text-center py-4 text-blue-500"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>กำลังตรวจสอบคิว...</div>';
+            if(!state.barberId || !state.date || state.totalDuration === 0) return;
 
-            const allTimes = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
-            let bookedTimes = [];
+            const container = document.getElementById('time-container');
+            document.getElementById('section-time').classList.remove('opacity-50', 'pointer-events-none');
+            container.innerHTML = '<div class="col-span-3 text-center py-4 text-blue-500"><i class="fas fa-spinner fa-spin"></i> กำลังคำนวณคิวว่าง...</div>';
+
+            const shopOpen = 9; // 09:00
+            const shopClose = 19; // 19:00
+            const allStartTimes = [];
+            
+            // สร้าง Slot เวลาที่เป็นไปได้ตามเวลาเปิดร้าน
+            for(let h = shopOpen; h < shopClose; h++) {
+                allStartTimes.push(h + ":00");
+            }
 
             try {
-                // ดึงข้อมูลเวลาที่ถูกจองแล้วจาก Google Sheet จริง
                 const res = await fetch(`${APPS_SCRIPT_URL}?action=check_times&date=${state.date}&barberId=${state.barberId}`);
                 const data = await res.json();
-                
-                if(data.status === 'success') {
-                    bookedTimes = data.data;
-                }
-                renderTimeSlots(container, allTimes, bookedTimes);
+                const bookedTimes = data.status === 'success' ? data.data : []; // e.g., ['10:00', '11:00']
+
+                renderSmartTimeSlots(container, allStartTimes, bookedTimes, state.totalDuration, shopClose);
 
             } catch (err) {
-                console.warn("API Connection failed, using fallback UI.");
-                // ระบบ Fallback หากเชื่อมต่อ API พัง จะยอมให้ปุ่มเวลาแสดงขึ้นมาเพื่อให้ทดสอบหน้าจอต่อไปได้
-                renderTimeSlots(container, allTimes, []);
+                console.warn(err);
+                container.innerHTML = '<div class="col-span-3 text-center text-red-500">ตรวจสอบคิวล้มเหลว</div>';
             }
         }
 
-        function renderTimeSlots(container, allTimes, bookedTimes) {
-            container.innerHTML = allTimes.map(time => {
-                const isBooked = bookedTimes.includes(time);
-                return `
-                    <button onclick="selectTime('${time}')" ${isBooked ? 'disabled' : ''} id="btn-time-${time.replace(':','')}" 
-                        class="time-btn py-3 border border-gray-200 rounded-xl text-sm font-medium transition-all ${isBooked ? 'opacity-60' : 'bg-white text-gray-700 hover:border-blue-400 hover:shadow-md'}">
-                        ${time} ${isBooked ? '<br><span class="text-xs font-normal">(เต็ม)</span>' : ''}
-                    </button>
-                `;
+        function renderSmartTimeSlots(container, allStartTimes, bookedTimes, neededDuration, shopCloseHour) {
+            container.innerHTML = allStartTimes.map(startTime => {
+                const startHour = parseInt(startTime.split(':')[0]);
+                
+                // ตรวจสอบว่ามีเวลาพอไหม (เช่น จอง 3 ชม. แต่เริ่ม 18.00 ไม่ได้ เพราะร้านปิด 19.00)
+                if (startHour + neededDuration > shopCloseHour) {
+                    return ''; // ไม่แสดงปุ่มนี้เลย
+                }
+
+                // ตรวจสอบว่าช่วงเวลาต่อเนื่องว่างไหม
+                let isAvailable = true;
+                for (let i = 0; i < neededDuration; i++) {
+                    let checkTime = (startHour + i) + ":00";
+                    if (bookedTimes.includes(checkTime)) {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+
+                // สร้างปุ่ม
+                if (!isAvailable) {
+                    return `
+                        <button disabled class="time-btn py-3 border border-gray-200 rounded-xl text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                            ${startTime} <br><span class="text-[10px]">(ไม่ว่าง)</span>
+                        </button>
+                    `;
+                } else {
+                    const endHour = startHour + neededDuration;
+                    return `
+                        <button onclick="selectTime('${startTime}')" id="btn-time-${startTime.replace(':','')}" 
+                            class="time-btn py-3 border border-gray-200 rounded-xl text-sm font-medium bg-white text-gray-700 hover:border-blue-500 hover:shadow-md transition-all">
+                            ${startTime} - ${endHour}:00
+                        </button>
+                    `;
+                }
             }).join('');
             checkReady();
         }
@@ -211,33 +305,31 @@
             });
             
             const btn = document.getElementById(`btn-time-${time.replace(':','')}`);
-            btn.classList.replace('bg-white', 'bg-blue-600');
-            btn.classList.replace('text-gray-700', 'text-white');
-            btn.classList.replace('border-gray-200', 'border-blue-600');
+            if(btn) {
+                btn.classList.replace('bg-white', 'bg-blue-600');
+                btn.classList.replace('text-gray-700', 'text-white');
+                btn.classList.replace('border-gray-200', 'border-blue-600');
+            }
             
             document.getElementById('section-info').classList.remove('opacity-50', 'pointer-events-none');
-            
-            // เลื่อนจอลงมาที่ช่องเบอร์โทรศัพท์
             setTimeout(() => {
                 document.getElementById('input-phone').focus();
                 document.getElementById('section-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 150);
-            
             checkReady();
         }
 
         function checkReady() {
             const btn = document.getElementById('btn-submit');
-            if (state.barberId && state.date && state.time && state.phone.length >= 9) {
+            if (state.barberId && state.totalDuration > 0 && state.date && state.time && state.phone.length >= 9) {
                 btn.disabled = false;
-                btn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold shadow-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2";
-                btn.innerHTML = `ยืนยันการจองคิว <i class="fa-solid fa-arrow-right"></i>`;
+                btn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2";
+                btn.innerHTML = `ยืนยันการจอง (${state.totalDuration} ชม.) <i class="fa-solid fa-arrow-right"></i>`;
                 btn.onclick = submitBooking;
             } else {
                 btn.disabled = true;
                 btn.className = "w-full bg-gray-200 text-gray-400 py-4 rounded-xl font-bold transition-all";
-                if(state.time && state.phone.length < 9) btn.innerHTML = `ระบุเบอร์โทรศัพท์ 9-10 หลัก`;
-                else btn.innerHTML = `กรอกข้อมูลให้ครบถ้วน`;
+                btn.innerHTML = `กรอกข้อมูลให้ครบถ้วน`;
             }
         }
 
@@ -245,35 +337,30 @@
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             
             try {
+                // ส่งข้อมูลเพิ่ม: duration และ services
+                const payload = {
+                    action: "book",
+                    ...state,
+                    duration: state.totalDuration 
+                };
+
                 const res = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: "book", ...state })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 
                 if (data.status === 'success') {
                     Swal.fire('สำเร็จ', 'บันทึกการจองเรียบร้อยแล้ว', 'success').then(() => {
-                        // ป้องกัน Error จากการเปลี่ยนหน้าในโหมด Preview
-                        if (window.location.hostname === '') {
-                            fetchAvailableTimes(); // โหลดหน้าจองใหม่
-                        } else {
-                            try { window.location.href = 'history.html'; } catch(e) {}
-                        }
+                        window.location.href = 'history.html';
                     });
                 } else {
                     Swal.fire('ขออภัย', data.message || 'เกิดข้อผิดพลาด', 'error').then(() => {
-                        fetchAvailableTimes(); // โหลดเวลาใหม่ เพราะอาจโดนจองตัดหน้า
+                        fetchAvailableTimes(); 
                     });
                 }
             } catch (err) {
-                // สำหรับโหมดจำลอง เมื่อกดบันทึกแล้วจะผ่านไปได้เลย
-                Swal.fire('จองคิวสำเร็จ (โหมดทดสอบ)', 'ระบบดักจับ Error และจำลองการทำงานสำเร็จ', 'success').then(() => {
-                     if (window.location.hostname === '') {
-                         fetchAvailableTimes(); 
-                     } else {
-                         try { window.location.href = 'index.html'; } catch(e) {}
-                     }
-                });
+                Swal.fire('Error', 'การเชื่อมต่อขัดข้อง', 'error');
             }
         }
     </script>
