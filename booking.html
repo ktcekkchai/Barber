@@ -34,7 +34,7 @@
             <div class="grid grid-cols-2 gap-3" id="barber-list"></div>
         </section>
 
-        <!-- 2. เลือกบริการ (เพิ่มใหม่) -->
+        <!-- 2. เลือกบริการ -->
         <section id="section-services" class="opacity-50 pointer-events-none transition-all duration-300">
             <h2 class="text-lg font-semibold mb-3">2. เลือกบริการ <span class="text-xs text-gray-500">(เลือกได้มากกว่า 1)</span></h2>
             <div class="space-y-2">
@@ -134,7 +134,8 @@
             name: localStorage.getItem('userName'), 
             barberId: null, barberName: null,
             date: null, time: null, phone: "",
-            services: [], totalDuration: 0, serviceNames: ""
+            services: "", // แก้ไข: ตั้งค่าเริ่มต้นเป็น String ว่าง
+            totalDuration: 0
         };
 
         const barbers = [
@@ -212,7 +213,8 @@
             });
 
             state.totalDuration = duration;
-            state.serviceNames = names.join(', ');
+            // แก้ไข: บันทึกชื่อบริการเป็นข้อความคั่นด้วยลูกน้ำทันที
+            state.services = names.join(', ');
 
             const display = document.getElementById('total-time-display');
             if(duration > 0) {
@@ -235,11 +237,10 @@
             document.getElementById('section-time').classList.remove('opacity-50', 'pointer-events-none');
             container.innerHTML = '<div class="col-span-3 text-center py-4 text-blue-500"><i class="fas fa-spinner fa-spin"></i> กำลังคำนวณคิวว่าง...</div>';
 
-            const shopOpen = 9; // 09:00
-            const shopClose = 19; // 19:00
+            const shopOpen = 9; 
+            const shopClose = 19;
             const allStartTimes = [];
             
-            // สร้าง Slot เวลาที่เป็นไปได้ตามเวลาเปิดร้าน
             for(let h = shopOpen; h < shopClose; h++) {
                 allStartTimes.push(h + ":00");
             }
@@ -247,7 +248,7 @@
             try {
                 const res = await fetch(`${APPS_SCRIPT_URL}?action=check_times&date=${state.date}&barberId=${state.barberId}`);
                 const data = await res.json();
-                const bookedTimes = data.status === 'success' ? data.data : []; // e.g., ['10:00', '11:00']
+                const bookedTimes = data.status === 'success' ? data.data : [];
 
                 renderSmartTimeSlots(container, allStartTimes, bookedTimes, state.totalDuration, shopClose);
 
@@ -261,12 +262,10 @@
             container.innerHTML = allStartTimes.map(startTime => {
                 const startHour = parseInt(startTime.split(':')[0]);
                 
-                // ตรวจสอบว่ามีเวลาพอไหม (เช่น จอง 3 ชม. แต่เริ่ม 18.00 ไม่ได้ เพราะร้านปิด 19.00)
                 if (startHour + neededDuration > shopCloseHour) {
-                    return ''; // ไม่แสดงปุ่มนี้เลย
+                    return ''; 
                 }
 
-                // ตรวจสอบว่าช่วงเวลาต่อเนื่องว่างไหม
                 let isAvailable = true;
                 for (let i = 0; i < neededDuration; i++) {
                     let checkTime = (startHour + i) + ":00";
@@ -276,7 +275,6 @@
                     }
                 }
 
-                // สร้างปุ่ม
                 if (!isAvailable) {
                     return `
                         <button disabled class="time-btn py-3 border border-gray-200 rounded-xl text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
@@ -337,10 +335,11 @@
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             
             try {
-                // ส่งข้อมูลเพิ่ม: duration และ services
+                // ส่งข้อมูล services เป็นข้อความ String แน่นอน
                 const payload = {
                     action: "book",
                     ...state,
+                    services: state.services, 
                     duration: state.totalDuration 
                 };
 
