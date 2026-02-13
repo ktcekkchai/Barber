@@ -38,10 +38,9 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const userId = localStorage.getItem('userId');
             
-            // ตรวจสอบการ Login
             if(!userId) { 
                 if (window.location.hostname === '') {
-                    renderMockHistory(); // โหมด Preview
+                    renderMockHistory(); 
                     return;
                 } else {
                     window.location.href = 'index.html'; 
@@ -52,26 +51,23 @@
             const container = document.getElementById('history-container');
             
             try {
-                // ดึงข้อมูลจาก Google Script
                 const res = await fetch(`${APPS_SCRIPT_URL}?action=history&userId=${userId}`);
                 const data = await res.json();
                 
                 if(data.status === 'success' && data.data.length > 0) {
                     
-                    // วนลูปสร้างการ์ดประวัติ
                     container.innerHTML = data.data.map(item => {
-                        
-                        // ตรวจสอบสถานะการจอง (Confirmed หรือ Cancelled)
                         const isCancelled = (item.status === 'Cancelled');
                         
-                        // สร้างป้ายสถานะตามข้อมูลจริง
                         const statusBadge = isCancelled 
                             ? `<span class="text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-100"><i class="fa-solid fa-xmark"></i> ถูกยกเลิก</span>`
                             : `<span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100"><i class="fa-solid fa-check"></i> ยืนยันแล้ว</span>`;
                         
-                        // ถ้าโดนยกเลิก ทำให้การ์ดสีจางลงนิดหน่อยเพื่อความชัดเจน
                         const cardStyle = isCancelled ? 'opacity-70 bg-gray-50' : 'bg-white';
                         const textStyle = isCancelled ? 'line-through text-gray-400' : 'text-gray-800';
+
+                        // แสดงรายการบริการ (ถ้าไม่มีให้ขึ้นว่า ทั่วไป)
+                        const servicesList = item.services || "บริการทั่วไป";
 
                         return `
                         <div class="${cardStyle} p-4 rounded-xl border border-gray-200 mb-3 shadow-sm hover:shadow-md transition">
@@ -82,14 +78,14 @@
                                 </div>
                                 ${statusBadge}
                             </div>
-                            <div class="space-y-1">
-                                <p class="text-sm text-gray-700">
-                                    <i class="fa-regular fa-user text-blue-500 w-5 text-center"></i> 
-                                    <span class="text-gray-500 text-xs mr-1">ผู้จอง:</span> ${item.name || 'ไม่ระบุชื่อ'}
+                            <div class="space-y-2">
+                                <p class="text-sm text-gray-700 flex items-start gap-2">
+                                    <i class="fa-solid fa-scissors text-orange-500 w-5 text-center mt-0.5"></i> 
+                                    <span><span class="text-gray-500 text-xs mr-1">ช่าง:</span> ${item.barber}</span>
                                 </p>
-                                <p class="text-sm text-gray-700">
-                                    <i class="fa-solid fa-scissors text-orange-500 w-5 text-center"></i> 
-                                    <span class="text-gray-500 text-xs mr-1">ช่าง:</span> ${item.barber}
+                                <p class="text-sm text-gray-700 flex items-start gap-2">
+                                    <i class="fa-solid fa-list-check text-purple-500 w-5 text-center mt-0.5"></i>
+                                    <span><span class="text-gray-500 text-xs mr-1">บริการ:</span> ${servicesList}</span>
                                 </p>
                             </div>
                         </div>
@@ -101,18 +97,13 @@
                 }
             } catch (err) {
                 console.error("Fetch Error:", err);
-                container.innerHTML = `<div class="text-center py-10 text-red-500">
-                    <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
-                    <p>โหลดประวัติไม่สำเร็จ</p>
-                </div>`;
+                container.innerHTML = `<div class="text-center py-10 text-red-500">โหลดประวัติไม่สำเร็จ</div>`;
             }
         });
 
-        // จำลองข้อมูลสำหรับหน้า Canvas Preview
         function renderMockHistory() {
             const container = document.getElementById('history-container');
             container.innerHTML = `
-                <!-- ตัวอย่างที่ 1: ยืนยันแล้ว -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 mb-3 shadow-sm">
                     <div class="flex justify-between items-start mb-3 border-b border-gray-100 pb-2">
                         <div>
@@ -121,24 +112,9 @@
                         </div>
                         <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100"><i class="fa-solid fa-check"></i> ยืนยันแล้ว</span>
                     </div>
-                    <div class="space-y-1">
-                        <p class="text-sm text-gray-700"><i class="fa-regular fa-user text-blue-500 w-5 text-center"></i> <span class="text-gray-500 text-xs mr-1">ผู้จอง:</span> ลูกค้าจำลอง</p>
-                        <p class="text-sm text-gray-700"><i class="fa-solid fa-scissors text-orange-500 w-5 text-center"></i> <span class="text-gray-500 text-xs mr-1">ช่าง:</span> ช่างเอก</p>
-                    </div>
-                </div>
-
-                <!-- ตัวอย่างที่ 2: ถูกยกเลิก -->
-                <div class="opacity-70 bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3 shadow-sm">
-                    <div class="flex justify-between items-start mb-3 border-b border-gray-100 pb-2">
-                        <div>
-                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">10:00 น.</span>
-                            <span class="font-bold line-through text-gray-400 ml-2">2026-02-12</span>
-                        </div>
-                        <span class="text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-100"><i class="fa-solid fa-xmark"></i> ถูกยกเลิก</span>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-sm text-gray-700"><i class="fa-regular fa-user text-blue-500 w-5 text-center"></i> <span class="text-gray-500 text-xs mr-1">ผู้จอง:</span> ลูกค้าจำลอง</p>
-                        <p class="text-sm text-gray-700"><i class="fa-solid fa-scissors text-orange-500 w-5 text-center"></i> <span class="text-gray-500 text-xs mr-1">ช่าง:</span> ช่างบอย</p>
+                    <div class="space-y-2">
+                        <p class="text-sm text-gray-700 flex items-start gap-2"><i class="fa-solid fa-scissors text-orange-500 w-5 text-center mt-0.5"></i> <span><span class="text-gray-500 text-xs mr-1">ช่าง:</span> ช่างเอก</span></p>
+                        <p class="text-sm text-gray-700 flex items-start gap-2"><i class="fa-solid fa-list-check text-purple-500 w-5 text-center mt-0.5"></i> <span><span class="text-gray-500 text-xs mr-1">บริการ:</span> ตัดผม, ดัดผม (3 ชม.)</span></p>
                     </div>
                 </div>
             `;
