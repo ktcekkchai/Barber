@@ -28,10 +28,12 @@
 
     <div class="max-w-md mx-auto p-4 space-y-6">
         
-        <!-- 1. เลือกช่าง -->
+        <!-- 1. เลือกช่าง (ปรับปรุงใหม่ มีรูปภาพ) -->
         <section>
             <h2 class="text-lg font-semibold mb-3">1. เลือกช่างตัดผม</h2>
-            <div class="grid grid-cols-2 gap-3" id="barber-list"></div>
+            <div class="grid grid-cols-2 gap-3" id="barber-list">
+                <!-- รายชื่อช่างจะถูกสร้างด้วย JS ด้านล่าง -->
+            </div>
         </section>
 
         <!-- 2. เลือกบริการ -->
@@ -126,7 +128,7 @@
     </div>
 
     <script>
-        // *** นำ URL ของ Apps Script ล่าสุดมาใส่ตรงนี้ ***
+        // ใช้ URL ล่าสุดที่คุณแจ้งไว้
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxdaYgSIOWki0K1uPfRONupPB50EnDCyC3SF4huB-0FeMwoNAyGkyDowpI9QniGsss/exec"; 
 
         let state = {
@@ -134,12 +136,23 @@
             name: localStorage.getItem('userName'), 
             barberId: null, barberName: null,
             date: null, time: null, phone: "",
-            services: "", // เริ่มต้นเป็น String ว่าง
+            services: "", 
             totalDuration: 0
         };
 
+        // --- แก้ไขข้อมูลช่างตรงนี้ ---
+        // คุณสามารถเปลี่ยน Link รูปภาพ (img) เป็นรูปจริงของช่างได้เลย
         const barbers = [
-            { id: 1, name: "ช่างเอก" }, { id: 2, name: "ช่างบอย" }, { id: 3, name: "ช่างโจ" }
+            { 
+                id: 1, 
+                name: "ช่างเกด", 
+                img: "https://api.dicebear.com/9.x/avataaars/svg?seed=Ked&gender=female&hair=long&clothing=shirt" // รูปผู้หญิง
+            },
+            { 
+                id: 2, 
+                name: "ช่างติ๊ก", 
+                img: "https://api.dicebear.com/9.x/avataaars/svg?seed=Tik&gender=male&beard=medium&clothing=collarAndSweater" // รูปผู้ชาย
+            }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -154,11 +167,22 @@
             }
             document.getElementById('input-name').value = state.name;
             
-            // Render Barbers
+            // --- Render Barbers (แสดงผลรายชื่อช่าง) ---
             const barberContainer = document.getElementById('barber-list');
             barberContainer.innerHTML = barbers.map(b => `
-                <button onclick="selectBarber(${b.id}, '${b.name}')" id="btn-barber-${b.id}" class="barber-btn bg-white border-2 border-transparent p-3 rounded-xl text-center shadow-sm hover:border-blue-200 transition">
-                    <div class="font-bold text-gray-800">${b.name}</div>
+                <button onclick="selectBarber(${b.id}, '${b.name}')" id="btn-barber-${b.id}" 
+                    class="barber-btn bg-white border-2 border-transparent p-4 rounded-xl shadow-sm hover:border-blue-300 transition-all flex flex-col items-center gap-3 group">
+                    
+                    <!-- รูปโปรไฟล์ช่าง -->
+                    <div class="relative">
+                        <img src="${b.img}" class="w-16 h-16 rounded-full border-2 border-gray-100 object-cover shadow-sm group-hover:scale-105 transition-transform">
+                        <div class="absolute bottom-0 right-0 w-4 h-4 bg-gray-300 border-2 border-white rounded-full status-dot"></div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="font-bold text-gray-800 text-lg">${b.name}</p>
+                        <p class="text-xs text-gray-400">ช่างตัดผมมืออาชีพ</p>
+                    </div>
                 </button>
             `).join('');
 
@@ -190,13 +214,24 @@
 
         function selectBarber(id, name) {
             state.barberId = id; state.barberName = name; 
+            
+            // Reset styles
             document.querySelectorAll('.barber-btn').forEach(el => {
-                el.classList.remove('border-blue-500', 'bg-blue-50');
+                el.classList.remove('border-blue-600', 'bg-blue-50');
                 el.classList.add('border-transparent', 'bg-white');
+                // Reset dot color
+                el.querySelector('.status-dot').classList.remove('bg-green-500');
+                el.querySelector('.status-dot').classList.add('bg-gray-300');
             });
+
+            // Highlight selected
             const selectedBtn = document.getElementById(`btn-barber-${id}`);
             selectedBtn.classList.remove('border-transparent', 'bg-white');
-            selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+            selectedBtn.classList.add('border-blue-600', 'bg-blue-50');
+            
+            // Green dot
+            selectedBtn.querySelector('.status-dot').classList.remove('bg-gray-300');
+            selectedBtn.querySelector('.status-dot').classList.add('bg-green-500');
             
             document.getElementById('section-services').classList.remove('opacity-50', 'pointer-events-none');
             checkReady();
@@ -213,7 +248,6 @@
             });
 
             state.totalDuration = duration;
-            // สร้าง string ไว้เลยที่นี่
             state.services = names.join(', ');
 
             const display = document.getElementById('total-time-display');
@@ -335,7 +369,6 @@
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             
             try {
-                // ดักจับอีกชั้น: ถ้า services เป็น Array ให้แปลงเป็น String ทันที
                 let finalServices = state.services;
                 if (Array.isArray(finalServices)) {
                     finalServices = finalServices.join(', ');
