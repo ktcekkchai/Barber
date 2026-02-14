@@ -111,7 +111,7 @@
                 </div>
             </section>
 
-            <!-- Price List Section (ปรับปรุงใหม่ตามรายการที่ขอ) -->
+            <!-- Price List Section -->
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">อัตราค่าบริการ</h2>
@@ -119,49 +119,60 @@
                 </div>
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-2">
                     <ul class="divide-y divide-gray-100">
-                        <!-- ตัดผมเด็กเล็ก -->
+                        
+                        <!-- ผู้ใหญ่ -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">ผู้ใหญ่</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-gray-900">120-150฿</span>
+                        </li>
+
+                        <!-- เด็ก -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500">
-                                    <i class="fa-solid fa-baby"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-sm">เด็กเล็ก</p>
-                                    <p class="text-xs text-gray-400">อายุไม่เกิน 7 ปี</p>
-                                </div>
-                            </div>
-                            <span class="font-bold text-lg text-gray-900">60฿</span>
-                        </li>
-                        
-                        <!-- ตัดผมเด็กโต -->
-                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-sky-50 rounded-full flex items-center justify-center text-sky-500">
                                     <i class="fa-solid fa-child"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800 text-sm">เด็กโต / นักเรียน</p>
-                                    <p class="text-xs text-gray-400">อายุ 8 - 15 ปี</p>
+                                    <p class="font-bold text-gray-800 text-sm">เด็ก</p>
                                 </div>
                             </div>
-                            <span class="font-bold text-lg text-gray-900">100฿</span>
-                        </li>
-                        
-                        <!-- ตัดผมผู้ใหญ่ -->
-                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500">
-                                    <i class="fa-solid fa-user-tie"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-sm">ตัดผมผู้ใหญ่</p>
-                                    <p class="text-xs text-gray-400">ตัด ซอย เซ็ตทรง</p>
-                                </div>
-                            </div>
-                            <span class="font-bold text-lg text-gray-900">120-140฿</span>
+                            <span class="font-bold text-base text-gray-900">70-80฿</span>
                         </li>
 
-                        <!-- แคะหู (เพิ่มใหม่) -->
+                        <!-- ทรงผมแฟชั่น -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-violet-50 rounded-full flex items-center justify-center text-violet-500">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">ทรงผมแฟชั่น</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-gray-900">150-250฿</span>
+                        </li>
+
+                        <!-- เด็กตัดผมแฟชั่น -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-pink-50 rounded-full flex items-center justify-center text-pink-500">
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">เด็กตัดผมแฟชั่น</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-gray-900">100-200฿</span>
+                        </li>
+
+                        <!-- แคะหู -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-yellow-50 rounded-full flex items-center justify-center text-yellow-600">
@@ -169,13 +180,12 @@
                                 </div>
                                 <div>
                                     <p class="font-bold text-gray-800 text-sm">แคะหู</p>
-                                    <p class="text-xs text-gray-400">ทำความสะอาด</p>
                                 </div>
                             </div>
-                            <span class="font-bold text-lg text-gray-900">50฿</span>
+                            <span class="font-bold text-base text-gray-900">100฿</span>
                         </li>
 
-                        <!-- ล้างตา (เพิ่มใหม่) -->
+                        <!-- ล้างตา -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
@@ -183,39 +193,91 @@
                                 </div>
                                 <div>
                                     <p class="font-bold text-gray-800 text-sm">ล้างตา</p>
-                                    <p class="text-xs text-gray-400">ผ่อนคลายดวงตา</p>
                                 </div>
                             </div>
-                            <span class="font-bold text-lg text-gray-900">50฿</span>
+                            <span class="font-bold text-base text-gray-900">100฿</span>
                         </li>
 
-                        <!-- ทำสีผม (เพิ่มใหม่) -->
+                        <!-- สระผม -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-purple-600">
+                                <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-500">
+                                    <i class="fa-solid fa-shower"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">สระผม</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-gray-900">80฿</span>
+                        </li>
+
+                        <!-- โกนหนวด -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
+                                    <i class="fa-solid fa-user-pen"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">โกนหนวด</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-gray-900">100฿</span>
+                        </li>
+
+                        <!-- ย้อมปิดผมหงอก -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white">
                                     <i class="fa-solid fa-paintbrush"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800 text-sm">ทำสีผม</p>
-                                    <p class="text-xs text-gray-400">ปิดผมขาว</p>
+                                    <p class="font-bold text-gray-800 text-sm">ย้อมปิดผมหงอก</p>
                                 </div>
                             </div>
-                            <span class="font-bold text-lg text-gray-900">100฿</span>
+                            <span class="font-bold text-base text-gray-900">180฿</span>
                         </li>
 
-                        <!-- ดัดผม/ยืดผม (เพิ่มใหม่) -->
+                        <!-- ย้อมสีผมแฟชั่น -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-pink-50 rounded-full flex items-center justify-center text-pink-600">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fa-solid fa-palette"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800 text-sm">ดัดผม - ยืดผม</p>
-                                    <p class="text-xs text-gray-400">วอลลุ่ม / ตรงธรรมชาติ</p>
+                                    <p class="font-bold text-gray-800 text-sm">ย้อมสีผมแฟชั่น</p>
+                                    <p class="text-[10px] text-gray-400">เริ่มต้น</p>
                                 </div>
                             </div>
-                            <span class="font-bold text-lg text-gray-900">1,000฿</span>
+                            <span class="font-bold text-base text-gray-900">799฿+</span>
                         </li>
+
+                        <!-- ดัดผม ยืดผม -->
+                        <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center text-rose-500">
+                                    <i class="fa-solid fa-wind"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">ดัดผม ยืดผม</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-gray-900">1,000฿</span>
+                        </li>
+
+                        <!-- เด็กตัดยาก -->
+                        <li class="flex items-center justify-between p-4 bg-red-50 rounded-2xl transition-colors border border-red-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-red-500 shadow-sm">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-red-800 text-sm">เด็กตัดยาก*</p>
+                                    <p class="text-[10px] text-red-500 leading-tight mt-0.5">ร้องไห้/ดิ้น/ต้องอุ้มตัด</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-red-700">150฿</span>
+                        </li>
+
                     </ul>
                 </div>
             </section>
