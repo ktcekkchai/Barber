@@ -6,6 +6,8 @@
     <title>จองคิวตัดผม</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- 🔴 เพิ่ม LIFF SDK ของ LINE ตรงนี้เพื่อให้สามารถดึง Token ได้ -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
@@ -129,6 +131,7 @@
 
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2ySvA2zdzSUKS31_IVdQlNFMAnsYY5TM-g9WEm_PRSWZTFwKYzs61aM1ZfQsIVh_4/exec"; 
+        const LIFF_ID = "2009061981-DcElzckB"; // 🔴 ใส่ LIFF ID ของคุณที่นี่ด้วยครับ
 
         let state = {
             userId: localStorage.getItem('userId'),
@@ -148,7 +151,17 @@
             }
         ];
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            // 🔴 Initialize LIFF เพื่อเตรียมดึง Token ตอนส่งข้อมูล
+            try {
+                if (LIFF_ID !== "YOUR_LIFF_ID") {
+                    await liff.init({ liffId: LIFF_ID });
+                }
+            } catch (err) {
+                console.error("LIFF Init Error:", err);
+            }
+
             if (!state.userId) {
                  if (window.location.hostname === '') {
                      state.userId = "MockUser123";
@@ -372,11 +385,22 @@
                     finalServices = finalServices.join(', ');
                 }
 
+                // 🔴 ดึง ID Token จาก LIFF ส่งกลับไปที่ระบบหลังบ้าน
+                let idToken = "";
+                try {
+                    if (typeof liff !== 'undefined' && liff.isLoggedIn()) {
+                        idToken = liff.getIDToken();
+                    }
+                } catch (e) {
+                    console.log("Error getting ID Token:", e);
+                }
+
                 const payload = {
                     action: "book",
                     ...state,
                     services: finalServices, 
-                    duration: state.totalDuration 
+                    duration: state.totalDuration,
+                    idToken: idToken // ส่ง ID Token เข้าไปใน Payload ด้วย
                 };
 
                 const res = await fetch(APPS_SCRIPT_URL, {
