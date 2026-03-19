@@ -67,19 +67,13 @@
             </button>
         </div>
 
-        <!-- Filter Tabs (ปรับให้ตรงกับช่างล่าสุดของคุณ) -->
+        <!-- Filter Tabs (เหลือแค่ช่างเกด) -->
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
             <button onclick="setFilter('all')" id="filter-all" class="filter-btn active bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors">
                 ทั้งหมด
             </button>
-            <button onclick="setFilter('ช่างเอก')" id="filter-1" class="filter-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-blue-500"></div> ช่างเอก
-            </button>
-            <button onclick="setFilter('ช่างบอย')" id="filter-2" class="filter-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-orange-500"></div> ช่างบอย
-            </button>
-            <button onclick="setFilter('ช่างโจ')" id="filter-3" class="filter-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-green-500"></div> ช่างโจ
+            <button onclick="setFilter('ช่างเกด')" id="filter-1" class="filter-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-pink-500"></div> ช่างเกด
             </button>
         </div>
 
@@ -93,7 +87,7 @@
         // ==========================================
         // 🔴 ตั้งค่า 2 จุดนี้ให้ถูกต้องก่อนใช้งาน 🔴
         // ==========================================
-        const LIFF_ID = "2009061981-imujKj45"; // เปลี่ยนเป็น LIFF ID ของคุณ
+		const LIFF_ID = "2009061981-imujKj45"; // เปลี่ยนเป็น LIFF ID ของคุณ
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2ySvA2zdzSUKS31_IVdQlNFMAnsYY5TM-g9WEm_PRSWZTFwKYzs61aM1ZfQsIVh_4/exec"; // เปลี่ยนเป็น URL ของ Google Script ของคุณ
 
         let allBookingsData = [];
@@ -190,9 +184,7 @@
             // Update UI Buttons
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             if(filter === 'all') document.getElementById('filter-all').classList.add('active');
-            else if(filter === 'ช่างเอก') document.getElementById('filter-1').classList.add('active');
-            else if(filter === 'ช่างบอย') document.getElementById('filter-2').classList.add('active');
-            else if(filter === 'ช่างโจ') document.getElementById('filter-3').classList.add('active');
+            else if(filter === 'ช่างเกด') document.getElementById('filter-1').classList.add('active');
 
             renderBookings();
         }
@@ -253,7 +245,7 @@
                                 </p>
                                 <p class="flex items-center gap-2">
                                     <i class="fa-solid fa-scissors text-orange-400 w-5"></i> 
-                                    <span>ช่าง: <span class="font-bold text-blue-600">${item.barber}</span></span>
+                                    <span>ช่าง: <span class="font-bold text-pink-600">${item.barber}</span></span>
                                 </p>
                                 <div class="col-span-1 md:col-span-2 mt-2 bg-blue-50 p-3 rounded-lg border border-blue-100">
                                     <p class="flex items-start gap-2 text-blue-800">
