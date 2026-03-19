@@ -28,10 +28,10 @@
 
     <div class="max-w-md mx-auto p-4 space-y-6">
         
-        <!-- 1. เลือกช่าง (ปรับปรุงใหม่ มีรูปภาพ) -->
+        <!-- 1. เลือกช่าง (ปรับให้มีช่างคนเดียวและอยู่ตรงกลาง) -->
         <section>
-            <h2 class="text-lg font-semibold mb-3">1. เลือกช่างตัดผม</h2>
-            <div class="grid grid-cols-2 gap-3" id="barber-list">
+            <h2 class="text-lg font-semibold mb-3">1. ช่างตัดผม</h2>
+            <div class="grid grid-cols-1 max-w-[220px] mx-auto gap-3" id="barber-list">
                 <!-- รายชื่อช่างจะถูกสร้างด้วย JS ด้านล่าง -->
             </div>
         </section>
@@ -128,7 +128,6 @@
     </div>
 
     <script>
-        // ใช้ URL ล่าสุดที่คุณแจ้งไว้
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2ySvA2zdzSUKS31_IVdQlNFMAnsYY5TM-g9WEm_PRSWZTFwKYzs61aM1ZfQsIVh_4/exec"; 
 
         let state = {
@@ -140,13 +139,12 @@
             totalDuration: 0
         };
 
-        // --- แก้ไขข้อมูลช่างตรงนี้ ---
-        // คุณสามารถเปลี่ยน Link รูปภาพ (img) เป็นรูปจริงของช่างได้เลย
+        // เหลือแค่ช่างเกดคนเดียว
         const barbers = [
             { 
                 id: 1, 
                 name: "ช่างเกด", 
-                img: "https://ktcekkchai.github.io/Barber/gat666.png" // รูปผู้หญิง
+                img: "https://ktcekkchai.github.io/Barber/gat666.png"
             }
         ];
 
@@ -162,16 +160,15 @@
             }
             document.getElementById('input-name').value = state.name;
             
-            // --- Render Barbers (แสดงผลรายชื่อช่าง) ---
+            // --- Render Barbers ---
             const barberContainer = document.getElementById('barber-list');
             barberContainer.innerHTML = barbers.map(b => `
                 <button onclick="selectBarber(${b.id}, '${b.name}')" id="btn-barber-${b.id}" 
                     class="barber-btn bg-white border-2 border-transparent p-4 rounded-xl shadow-sm hover:border-blue-300 transition-all flex flex-col items-center gap-3 group">
                     
-                    <!-- รูปโปรไฟล์ช่าง -->
                     <div class="relative">
-                        <img src="${b.img}" class="w-16 h-16 rounded-full border-2 border-gray-100 object-cover shadow-sm group-hover:scale-105 transition-transform">
-                        <div class="absolute bottom-0 right-0 w-4 h-4 bg-gray-300 border-2 border-white rounded-full status-dot"></div>
+                        <img src="${b.img}" class="w-20 h-20 rounded-full border-2 border-gray-100 object-cover shadow-sm group-hover:scale-105 transition-transform">
+                        <div class="absolute bottom-0 right-0 w-5 h-5 bg-gray-300 border-2 border-white rounded-full status-dot"></div>
                     </div>
                     
                     <div class="text-center">
@@ -180,6 +177,13 @@
                     </div>
                 </button>
             `).join('');
+
+            // เลือกช่างอัตโนมัติ (เนื่องจากมีคนเดียว)
+            if (barbers.length === 1) {
+                setTimeout(() => {
+                    selectBarber(barbers[0].id, barbers[0].name);
+                }, 100);
+            }
 
             // Init Date
             const dateInput = document.getElementById('input-date');
@@ -214,19 +218,18 @@
             document.querySelectorAll('.barber-btn').forEach(el => {
                 el.classList.remove('border-blue-600', 'bg-blue-50');
                 el.classList.add('border-transparent', 'bg-white');
-                // Reset dot color
                 el.querySelector('.status-dot').classList.remove('bg-green-500');
                 el.querySelector('.status-dot').classList.add('bg-gray-300');
             });
 
             // Highlight selected
             const selectedBtn = document.getElementById(`btn-barber-${id}`);
-            selectedBtn.classList.remove('border-transparent', 'bg-white');
-            selectedBtn.classList.add('border-blue-600', 'bg-blue-50');
-            
-            // Green dot
-            selectedBtn.querySelector('.status-dot').classList.remove('bg-gray-300');
-            selectedBtn.querySelector('.status-dot').classList.add('bg-green-500');
+            if(selectedBtn) {
+                selectedBtn.classList.remove('border-transparent', 'bg-white');
+                selectedBtn.classList.add('border-blue-600', 'bg-blue-50');
+                selectedBtn.querySelector('.status-dot').classList.remove('bg-gray-300');
+                selectedBtn.querySelector('.status-dot').classList.add('bg-green-500');
+            }
             
             document.getElementById('section-services').classList.remove('opacity-50', 'pointer-events-none');
             checkReady();
@@ -364,7 +367,6 @@
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             
             try {
-			
                 let finalServices = state.services;
                 if (Array.isArray(finalServices)) {
                     finalServices = finalServices.join(', ');
