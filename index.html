@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Barber Shop</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- LIFF SDK -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
@@ -23,7 +19,6 @@
 </head>
 <body class="text-gray-800 pb-10 min-h-screen">
 
-    <!-- Loading Screen -->
     <div id="loading-screen" class="min-h-screen flex flex-col justify-center items-center bg-white absolute inset-0 z-50">
         <div class="relative w-20 h-20 mb-4 flex items-center justify-center">
             <div class="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
@@ -33,7 +28,6 @@
         <p class="text-gray-500 font-medium">กำลังเตรียมร้าน...</p>
     </div>
 
-    <!-- Login Screen -->
     <div id="login-screen" class="hidden min-h-screen flex flex-col justify-center items-center bg-white p-8">
         <div class="w-28 h-28 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-blue-200 mb-6">
             <i class="fa-solid fa-scissors text-5xl text-white transform -rotate-45"></i>
@@ -46,9 +40,7 @@
         </button>
     </div>
 
-    <!-- Main Menu Screen -->
     <div id="main-menu" class="hidden pb-8">
-        <!-- Navbar -->
         <div class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
             <div class="max-w-md mx-auto px-5 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -69,7 +61,6 @@
 
         <div class="max-w-md mx-auto p-5 space-y-8">
             
-            <!-- Banner & Actions -->
             <section class="space-y-4">
                 <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
                     <div class="relative z-10">
@@ -78,13 +69,22 @@
                                 <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i> เช็คสถานะร้าน...
                             </span>
                         </div>
-                        <p class="text-[11px] text-gray-300 mb-4 opacity-90"><i class="fa-regular fa-clock mr-1"></i> เปิด 09:00 - 19:00 น. | หยุดทุกวันพุธ</p>
+                        <div class="flex flex-col gap-1 mb-4 opacity-90">
+                            <p class="text-[11px] text-gray-300"><i class="fa-regular fa-clock mr-1"></i> เปิด 09:00 - 19:00 น. | หยุดทุกวันพุธ</p>
+                            <p class="text-[11px] text-gray-300"><i class="fa-solid fa-phone mr-1"></i> ติดต่อ: <span class="font-medium">086-217-8052</span></p>
+                        </div>
                         
                         <h2 class="text-2xl font-bold mb-1">จองคิวตัดผมวันนี้</h2>
                         <p class="text-gray-300 text-sm mb-5">เลือกช่างและเวลาที่คุณสะดวกได้เลย</p>
-                        <a href="booking.html" class="inline-flex items-center gap-2 bg-white text-gray-900 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-gray-100 transition-colors shadow-lg">
-                            จองคิวทันที <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </a>
+                        
+                        <div class="flex flex-wrap items-center gap-3">
+                            <a href="booking.html" class="inline-flex items-center gap-2 bg-white text-gray-900 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-gray-100 transition-colors shadow-lg">
+                                จองคิวทันที <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                            <a href="tel:0862178052" class="inline-flex items-center gap-2 bg-gray-700 text-white font-medium px-4 py-2.5 rounded-xl text-sm hover:bg-gray-600 transition-colors border border-gray-600">
+                                <i class="fa-solid fa-phone text-xs"></i> โทรด่วน
+                            </a>
+                        </div>
                     </div>
                     <i class="fa-solid fa-scissors absolute -bottom-6 -right-2 text-9xl text-white opacity-10 transform rotate-[-20deg]"></i>
                 </div>
@@ -111,7 +111,6 @@
                 </div>
             </section>
 
-            <!-- Price List Section -->
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">อัตราค่าบริการ</h2>
@@ -120,7 +119,6 @@
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-2">
                     <ul class="divide-y divide-gray-100">
                         
-                        <!-- ผู้ใหญ่ -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600">
@@ -133,7 +131,6 @@
                             <span class="font-bold text-base text-gray-900">120-150฿</span>
                         </li>
 
-                        <!-- เด็ก -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500">
@@ -146,7 +143,6 @@
                             <span class="font-bold text-base text-gray-900">70-80฿</span>
                         </li>
 
-                        <!-- ทรงผมแฟชั่น -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-violet-50 rounded-full flex items-center justify-center text-violet-500">
@@ -159,7 +155,6 @@
                             <span class="font-bold text-base text-gray-900">150-250฿</span>
                         </li>
 
-                        <!-- เด็กตัดผมแฟชั่น -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-pink-50 rounded-full flex items-center justify-center text-pink-500">
@@ -172,7 +167,6 @@
                             <span class="font-bold text-base text-gray-900">100-200฿</span>
                         </li>
 
-                        <!-- แคะหู -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-yellow-50 rounded-full flex items-center justify-center text-yellow-600">
@@ -185,7 +179,6 @@
                             <span class="font-bold text-base text-gray-900">100฿</span>
                         </li>
 
-                        <!-- ล้างตา -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
@@ -198,7 +191,6 @@
                             <span class="font-bold text-base text-gray-900">100฿</span>
                         </li>
 
-                        <!-- สระผม -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-500">
@@ -211,7 +203,6 @@
                             <span class="font-bold text-base text-gray-900">80฿</span>
                         </li>
 
-                        <!-- โกนหนวด -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
@@ -224,7 +215,6 @@
                             <span class="font-bold text-base text-gray-900">100฿</span>
                         </li>
 
-                        <!-- ย้อมปิดผมหงอก -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white">
@@ -237,7 +227,6 @@
                             <span class="font-bold text-base text-gray-900">180฿</span>
                         </li>
 
-                        <!-- ย้อมสีผมแฟชั่น -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center text-white">
@@ -251,7 +240,6 @@
                             <span class="font-bold text-base text-gray-900">799฿+</span>
                         </li>
 
-                        <!-- ดัดผม ยืดผม -->
                         <li class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center text-rose-500">
@@ -264,7 +252,6 @@
                             <span class="font-bold text-base text-gray-900">1,000฿</span>
                         </li>
 
-                        <!-- เด็กตัดยาก -->
                         <li class="flex items-center justify-between p-4 bg-red-50 rounded-2xl transition-colors border border-red-100">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-red-500 shadow-sm">
@@ -282,55 +269,47 @@
                 </div>
             </section>
 
-            <!-- Gallery Section -->
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">ทรงผมยอดฮิต</h2>
                     <span class="text-xs text-blue-600 font-medium">ดูทั้งหมด</span>
                 </div>
-                <!-- Horizontal Scroll Container -->
                 <div class="flex overflow-x-auto gap-4 pb-4 snap-x hide-scrollbar px-1">
                     
-                    <!-- Item 1 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
-                        <p class="text-sm font-bold text-gray-800 text-center">Fade Cut</p>
-                        <p class="text-[10px] text-gray-400 text-center">เฟดไล่ระดับ</p>
+                        <img src="https://ktcekkchai.github.io/Barber/10.png" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <p class="text-sm font-bold text-gray-800 text-center"> Mullet</p>
+                        <p class="text-[10px] text-gray-400 text-center">มัลเล็ต</p>
                     </div>
 
-                    <!-- Item 2 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
-                        <p class="text-sm font-bold text-gray-800 text-center">Undercut</p>
-                        <p class="text-[10px] text-gray-400 text-center">อันเดอร์คัท</p>
+                        <img src="https://ktcekkchai.github.io/Barber/10.png" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <p class="text-sm font-bold text-gray-800 text-center">Wolf cut</p>
+                        <p class="text-[10px] text-gray-400 text-center">วูฟคัต</p>
                     </div>
 
-                    <!-- Item 3 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <img src="https://ktcekkchai.github.io/Barber/10.png" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
                         <p class="text-sm font-bold text-gray-800 text-center">Pompadour</p>
                         <p class="text-[10px] text-gray-400 text-center">ปอมปาดัวร์เซ็ตวินเทจ</p>
                     </div>
 
-                    <!-- Item 4 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1512804593922-0a1518f88301?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
-                        <p class="text-sm font-bold text-gray-800 text-center">Buzz Cut</p>
-                        <p class="text-[10px] text-gray-400 text-center">สกินเฮด สั้นเกรียน</p>
+                        <img src="https://ktcekkchai.github.io/Barber/10.png" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <p class="text-sm font-bold text-gray-800 text-center">Skinhead</p>
+                        <p class="text-[10px] text-gray-400 text-center">สกินเฮด </p>
                     </div>
 
-                    <!-- Item 5 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1588665045610-1845bb08f6eb?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
-                        <p class="text-sm font-bold text-gray-800 text-center">Mullet</p>
-                        <p class="text-[10px] text-gray-400 text-center">รากไทรยอดฮิต</p>
+                        <img src="https://ktcekkchai.github.io/Barber/10.png" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <p class="text-sm font-bold text-gray-800 text-center">Pompadour</p>
+                        <p class="text-[10px] text-gray-400 text-center">ปอมปาดัวร์</p>
                     </div>
 
-                    <!-- Item 6 -->
                     <div class="min-w-[130px] snap-center">
-                        <img src="https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=300&h=300" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
-                        <p class="text-sm font-bold text-gray-800 text-center">Two Block</p>
-                        <p class="text-[10px] text-gray-400 text-center">ทูบล็อคสไตล์เกาหลี</p>
+                        <img src="https://ktcekkchai.github.io/Barber/10.png" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-100 mb-2">
+                        <p class="text-sm font-bold text-gray-800 text-center">Hair styled</p>
+                        <p class="text-[10px] text-gray-400 text-center">รองทรง</p>
                     </div>
 
                 </div>
